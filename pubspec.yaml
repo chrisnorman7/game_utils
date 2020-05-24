@@ -6,9 +6,9 @@ homepage: https://github.com/chrisnorman7/game_utils
 environment:
   sdk: '>=2.7.0 <3.0.0'
 
-#dependencies:
+dependencies:
 #  path: ^1.6.0
-  meta:
+  meta: ^1.1.8
 
 dev_dependencies:
   pedantic: ^1.8.0
