@@ -4,7 +4,7 @@
 
 ## 1.0.1
 
-- Add a note about examples.
+- Add a note about examples
 
 ## 1.0.2
 
@@ -12,4 +12,11 @@
 
 ## 1.0.3
 
-- allow a function to be run before FormBuilder.render.
+- allow a function to be run before FormBuilder.render
+
+## 2.0.0
+
+- Renamed CheckBoxLine to Line.checkBoxLine
+- Added a BookOptions class
+- Altered the signatures of a few functions
+- Renamed AmbiencesPage to SoundsPage

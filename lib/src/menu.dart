@@ -12,17 +12,19 @@ typedef TitleFunctionType = String Function();
 /// The type for all [Line] functions.
 typedef BookFunctionType = void Function();
 
-/// A book, which acts like a menu.
+/// The options for a [Book] instance.
 ///
-/// Books contain [Page] instances, which can be added with [Book.push].
-///
-///You can traverse through the menu with [Book.moveUp], [Book.moveDown].
-///
-/// You can return to the previous [Page] with [Book.cancel], which uses [Book.pop] to "pop" the most recently added [Page].
-/// You can activate items with [Book.activate].
-class Book{
-  /// Give it the ability to make sounds, and the ability to send messages.
-  Book(this.soundPool, this.message) {
+/// This allows you to share configuration over multiple books.
+class BookOptions {
+  BookOptions(
+    this.soundPool, this.message, {
+      this.searchSuccessSoundUrl = 'sounds/menus/searchsuccess.wav',
+      this.searchFailSoundUrl = 'sounds/menus/searchfail.wav',
+      this.moveSoundUrl = 'sounds/menus/move.wav',
+      this.activateSoundUrl = 'sounds/menus/activate.wav',
+      this.noCancelSoundUrl = 'sounds/menus/nocancel.wav'
+    }
+  ) {
     searchFailSound = soundPool.getSound(searchFailSoundUrl);
     searchSuccessSound = soundPool.getSound(searchSuccessSoundUrl);
     moveSound = soundPool.getSound(moveSoundUrl);
@@ -35,9 +37,6 @@ class Book{
 
   /// The function to use for showing text.
   final void Function(String) message;
-
-  /// The most recent search string.
-  String searchString;
 
   /// The URL sound to play when a search matches a result.
   String searchSuccessSoundUrl;
@@ -57,23 +56,42 @@ class Book{
   /// The sound associated with [moveSoundUrl].
   Sound moveSound;
 
-  /// The url of the sound to play when using [cancel].
+  /// The url of the sound to play when using [Book.cancel].
   String noCancelSoundUrl;
 
   /// The sound associated with [noCancelSoundUrl];
   Sound noCancelSound;
 
-  /// The url of the sound to play when using [activate] on a menu item.
+  /// The url of the sound to play when using [Book.activate].
   String activateSoundUrl;
 
   // The sound associated with [activateSoundUrl].
   Sound activateSound;
 
-  /// The last time a search was performed.
-  int lastSearchTime;
-
   /// The timeout (in milliseconds) for searches.
   int searchTimeout = 500;
+}
+
+/// A book, which acts like a menu.
+///
+/// Books contain [Page] instances, which can be added with [Book.push].
+///
+///You can traverse through the menu with [Book.moveUp], [Book.moveDown].
+///
+/// You can return to the previous [Page] with [Book.cancel], which uses [Book.pop] to "pop" the most recently added [Page].
+/// You can activate items with [Book.activate].
+class Book{
+  /// Give it the ability to make sounds, and the ability to send messages.
+  Book(this.options);
+
+  /// The options for this book.
+  final BookOptions options;
+
+  /// The most recent search string.
+  String searchString;
+
+  /// The last time a search was performed.
+  int lastSearchTime;
 
   /// The pages contained by this book.
   ///
@@ -124,28 +142,28 @@ class Book{
     return page.focus;
   }
 
-  /// Using [message], print the title of the currently active [Page].
+  /// Using `[options].message`, print the title of the currently active [Page].
   ///
-  /// If no page is is currently focussed ([getPage] returns null), then an error is thrown.
+  /// If no page is currently focussed ([getPage] returns null), then an error is thrown.
   void showFocus() {
     final Page page = getPage();
     if (page == null) {
       throw 'First push a page.';
     } else if (page.focus == -1) {
-      message(page.getTitle());
+      options.message(page.getTitle());
     } else {
       final Line line = page.getLine();
       String url;
       if (line.soundUrl != null) {
         url = line.soundUrl();
       } else if (page.playDefaultSounds) {
-        url = moveSoundUrl;
+        url = options.moveSoundUrl;
       }
-      moveSound.stop();
+      options.moveSound.stop();
       if (url != null) {
-        moveSound = soundPool.playSound(url, output: soundPool.output);
+        options.moveSound = options.soundPool.playSound(url, output: options.soundPool.output);
       }
-      message(line.getTitle());
+      options.message(line.getTitle());
     }
   }
 
@@ -193,7 +211,9 @@ class Book{
     if (line == null) {
       return; // They are probably looking at the title.
     }
-    activateSound = soundPool.playSound(activateSoundUrl);
+    if (options.activateSoundUrl != null) {
+      options.activateSound = options.soundPool.playSound(options.activateSoundUrl, output: options.soundPool.output);
+    }
     line.func();
   }
 
@@ -205,8 +225,10 @@ class Book{
     if (page == null) {
       return;
     } else if (!page.dismissible) {
-      noCancelSound.stop();
-      noCancelSound = soundPool.playSound(noCancelSoundUrl);
+      options.noCancelSound.stop();
+      if (options.noCancelSoundUrl != null) {
+        options.noCancelSound = options.soundPool.playSound(options.noCancelSoundUrl, output: options.soundPool.output);
+      }
     } else {
       pop();
       if (page.onCancel != null) {
@@ -228,7 +250,7 @@ class Book{
       return; // Don't search when there is no page.
     }
     final int now = timestamp();
-    if ((now - lastSearchTime) >= searchTimeout) {
+    if ((now - lastSearchTime) >= options.searchTimeout) {
       searchString = '';
     }
     lastSearchTime = now;
@@ -237,11 +259,15 @@ class Book{
       (Line entry) => entry.getTitle().toLowerCase().startsWith(searchString)
     );
     if (index == -1) {
-      searchSuccessSound.stop();
-      searchFailSound = soundPool.playSound(searchFailSoundUrl);
+      options.searchSuccessSound.stop();
+      if (options.searchFailSoundUrl != null) {
+        options.searchFailSound = options.soundPool.playSound(options.searchFailSoundUrl, output: options.soundPool.output);
+      }
     } else {
-      searchFailSound.stop();
-      searchSuccessSound = soundPool.getSound(searchSuccessSoundUrl);
+      options.searchFailSound.stop();
+      if (options.searchSuccessSoundUrl != null) {
+        options.searchSuccessSound = options.soundPool.getSound(options.searchSuccessSoundUrl);
+      }
       page.focus = index;
       showFocus();
     }
@@ -264,6 +290,22 @@ class Line {
       this.soundUrl,
     }
   );
+
+  /// A line that acts as a checkbox.
+  ///
+  /// When activated, this line will call [setValue], with the negated result of [getValue].
+  static Line checkboxLine(
+    Book book, String title, bool Function() getValue, void Function(bool) setValue, {
+      String enableUrl = 'sounds/menus/enable.wav',
+      String disableUrl = 'sounds/menus/disable.wav',
+    }
+  ) => Line(book, () {
+    final bool oldValue = getValue();
+    final bool newValue = !oldValue;
+    final String soundUrl = newValue ? enableUrl : disableUrl;
+    book.options.soundPool.playSound(soundUrl, output: book.options.soundPool.output);
+    setValue(newValue);
+  }, titleString: title);
 
   /// The book which this line is bound to, via a [Page] instance.
   Book book;
@@ -289,34 +331,6 @@ class Line {
     }
     return titleString;
   }
-}
-
-/// A line that acts as a checkbox.
-class CheckboxLine extends Line {
-  /// Create.
-  ///
-  /// When activated, this line will call [setValue], with the negated result of [getValue].
-  CheckboxLine(
-    Book book,
-    bool Function() getValue,
-    void Function(bool) setValue,
-    {
-      String titleString,
-      TitleFunctionType titleFunc,
-      String enableUrl = 'res/menus/enable.wav',
-      String disableUrl = 'res/menus/disable.wav',
-    }
-  ): super(
-    book, () {
-      final bool oldValue = getValue();
-      final bool newValue = !oldValue;
-      final String soundUrl = newValue ? enableUrl : disableUrl;
-      book.soundPool.playSound(soundUrl);
-      setValue(newValue);
-    },
-    titleString: titleString,
-    titleFunc: titleFunc,
-  );
 }
 
 /// A page of [Line] instances.
@@ -383,24 +397,31 @@ class Page {
   }
 
   /// Create a page for selecting an ambience.
-  static Page ambiencesPage(
-    Book book, List<String>ambiences, String currentAmbience,
-    void Function(String) onOk, String Function(String) getUrl, {String title}
+  static Page soundsPage(
+    Book book, List<String>sounds,
+    void Function(String) onOk, String Function(String) getUrl, {
+      String title, String currentSound, bool allowNull = true
+    }
   ) {
-    final List<Line> lines = <Line>[
-      Line(book, () {
-        onOk(null);
-      }, titleString: 'Clear')
-    ];
-    for (final String ambience in ambiences) {
+    final List<Line> lines = <Line>[];
+    if (allowNull) {
       lines.add(
         Line(book, () {
-          onOk(ambience);
-        }, titleString: '${ambience == currentAmbience} ? "* " : ""}$ambience',
-        soundUrl: () => getUrl(ambience))
+          onOk(null);
+        }, titleString: 'Clear')
       );
     }
-    return Page(titleString: title ?? 'Ambiences (${ambiences.length})', lines: lines, playDefaultSounds: false);
+    for (final String sound in sounds) {
+      lines.add(
+        Line(
+          book, () => onOk(sound),
+          titleString: '${sound == currentSound ? "* " : ""}$sound',
+          soundUrl: () => getUrl(sound)
+        )
+      );
+    }
+    title ??= 'Sounds (${lines.length})';
+    return Page(titleString: title, lines: lines, playDefaultSounds: false);
   }
 
   /// The function to call when [Book.cancel] is called.

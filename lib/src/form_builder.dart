@@ -229,6 +229,10 @@ class FormBuilder {
   /// Render the form, and add it to [element].
   ///
   /// If you want to add the form to the document yourself, you can use the [buildFormElement] method.
+  ///
+  /// Pass a [beforeRender] argument to have something happen before rendering is complete.
+  ///
+  /// The [beforeRender] argument was put in so that keyboard keys could be cleared before the form was rendered.
   void render(Element element, {void Function() beforeRender}) {
     buildFormElement();
     if (beforeRender != null) {
