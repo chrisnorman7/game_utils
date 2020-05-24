@@ -1,6 +1,6 @@
 name: game_utils
 description: Various game-related utilities I use in my own projects.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/chrisnorman7/game_utils
 
 environment:

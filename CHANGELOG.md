@@ -9,3 +9,7 @@
 ## 1.0.2
 
 - Changed the arguments accepted by Page.ambiencesPage
+
+## 1.0.3
+
+- allow a function to be run before FormBuilder.render.

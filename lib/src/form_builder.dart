@@ -229,8 +229,11 @@ class FormBuilder {
   /// Render the form, and add it to [element].
   ///
   /// If you want to add the form to the document yourself, you can use the [buildFormElement] method.
-  void render(Element element) {
+  void render(Element element, {void Function() beforeRender}) {
     buildFormElement();
+    if (beforeRender != null) {
+      beforeRender();
+    }
     element.append(form);
     if (autofocus && elements.isNotEmpty) {
       elements[0].element.focus();
