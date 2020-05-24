@@ -1,8 +1,7 @@
-/// Provides the Keyboard class.
+/// Provides Keyboard related classes.
 library keyboard;
 
 import 'dart:async';
-import 'dart:html';
 
 import 'package:meta/meta.dart';
 
@@ -68,7 +67,7 @@ class KeyState {
   }
 }
 
-/// A class for triggering [Hotkey] instances.
+/// A class for storing and triggering [Hotkey] instances.
 class Keyboard {
   /// Create the keyboard, adding a callback for when hotkeys throw an error.
   ///
@@ -91,10 +90,7 @@ class Keyboard {
   /// The hotkeys registered to this instance.
   List<Hotkey> hotkeys = <Hotkey>[];
 
-  /// The one-time [Hotkey] instances which have already been handled. This list will be cleared as the keys for those hotkeys are released.
-  List<Hotkey> handledHotkeys = <Hotkey>[];
-
-  /// Returns [true] if [key] is held down.
+  /// Returns true if the provided key is held down.
   ///
   /// ```
   /// if (keyboard.keyHeld(' ')) {
@@ -115,12 +111,7 @@ class Keyboard {
   /// ));
   /// ```
   KeyState press(
-    String key, {
-      bool shift = false,
-      bool control = false,
-      bool alt = false
-    }
-  ) {
+    String key, {bool shift = false, bool control = false, bool alt = false}) {
     final KeyState state = KeyState(key, shift: shift, control: control, alt: alt);
     if (!keyHeld(state.key)) {
       heldKeys.add(state);
@@ -174,8 +165,6 @@ class Keyboard {
   /// ```
   void addHotkey(Hotkey hk) {
     hotkeys.add(hk);
-    querySelector('#hotkeys').append(ParagraphElement()
-        ..innerText = '${hk.state}: ${hk.getTitle()}');
   }
 
   /// Remove a hotkey.
@@ -210,11 +199,11 @@ class Hotkey {
   /// );
   /// ```
   ///
-  /// The function [func] will fire when the hotkey is pressed. It will be called via [run], so that errors are handled appropriately.
+  /// The function func will fire when the hotkey is pressed. It will be called via [run], so that errors are handled appropriately.
   ///
-  /// If [interval] is not null, then [func] will be called every [interval] milliseconds.
+  /// If interval is not null, then func will be called every interval milliseconds.
   ///
-  /// If [runWhen] is not null, only run [func] when [runWhen] returns true.
+  /// If runWhen is not null, only run func when runWhen returns true.
   Hotkey(
     this.keyboard, String key, this.func, {
       this.titleString, this.titleFunc, this.interval, this.runWhen,
@@ -227,7 +216,7 @@ class Hotkey {
   /// The keyboard this hotkey is bound to.
   final Keyboard keyboard;
 
-  /// The key which must be pressed in order that this hotkey is fired.
+  /// The key which must be pressed in order for this hotkey to fire.
   KeyState state;
 
   /// The title of this hotkey.
@@ -287,7 +276,7 @@ class Hotkey {
     }
   }
 
-  /// Returns a [String] representing the title of this hotkey. If [titleString] was not provided, then [titleFunc]() will be returned instead.
+  /// Returns a string representing the title of this hotkey. If [titleString] was not provided, then [titleFunc] will be called, and its result returned instead.
   String getTitle() {
     if (titleString == null) {
       if (titleFunc != null) {

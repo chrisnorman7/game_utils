@@ -1,6 +1,6 @@
 /// Various game-related functions I've been using in other projects.
 ///
-/// Thought I'd bundle them together so I can use them in other things.
+/// Thought I'd bundle them together so I can use them elsewhere..
 library game_utils;
 
 export 'src/form_builder.dart';

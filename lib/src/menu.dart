@@ -42,13 +42,13 @@ class Book{
   /// The URL sound to play when a search matches a result.
   String searchSuccessSoundUrl;
 
-  /// The sound associated with [searchSuccessUrl];
+  /// The sound associated with [searchSuccessSoundUrl];
   Sound searchSuccessSound;
 
   /// The sound to play when a search matches nothing.
   String searchFailSoundUrl;
 
-  /// The sound associated with [searchFailUrl].
+  /// The sound associated with [searchFailSoundUrl].
   Sound searchFailSound;
 
   /// The url of the sound to play when moving through the menu.
@@ -101,7 +101,9 @@ class Book{
     return oldPage;
   }
 
-  /// Get the current page. If there are no pages, then [null] is returned.
+  /// Get the current page.
+  ///
+  /// If there are no pages, then null is returned.
   Page getPage() {
     if (pages.isNotEmpty) {
       return pages[pages.length - 1];
@@ -274,7 +276,7 @@ class Line {
 
   /// A function which when called should return the title of this line. Useful in circumstances where the title might change. On a configuration page for example.
   TitleFunctionType titleFunc;
-  
+
   /// A function which should return the URL of the sound to play when this line is selected.
   TitleFunctionType soundUrl;
 
@@ -293,7 +295,7 @@ class Line {
 class CheckboxLine extends Line {
   /// Create.
   ///
-  /// When activated, this line will call [setValue](![getValue]()).
+  /// When activated, this line will call [setValue], with the negated result of [getValue].
   CheckboxLine(
     Book book,
     bool Function() getValue,
@@ -398,7 +400,7 @@ class Page {
     return Page(titleString: title, lines: lines, playDefaultSounds: false);
   }
 
-  /// The function to call when [cancel] is called.
+  /// The function to call when [Book.cancel] is called.
   void Function() onCancel;
 
   /// If true, then any [Line] instances contained by this page will not be silent, even if their [Line.soundUrl] attributes are null.

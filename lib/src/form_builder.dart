@@ -1,4 +1,4 @@
-/// Contains the [FormBuilder> class.
+/// Provides classes for dynamically building HTML forms.
 library form_builder;
 
 import 'dart:async';
@@ -15,13 +15,8 @@ String notEmptyValidator(String name, Map<String, String> values, String value) 
   return null;
 }
 
-/// A validator which will return [message] if value is the same as [getValue]().
-ValidatorType notSameAsValidator(
-  String Function() getValue, {
-    String message = 'Values must not match.',
-    ValidatorType onSuccess
-  }
-) {
+/// A validator which will return [message] if value is the same as the result of calling [getValue].
+ValidatorType notSameAsValidator(String Function() getValue, {String message = 'Values must not match.', ValidatorType onSuccess}) {
   return (String name, Map<String, String> values, String value) {
     if (value == getValue()) {
       return message;
@@ -34,6 +29,8 @@ ValidatorType notSameAsValidator(
 }
 
 /// An element within a [FormBuilder] instance.
+///
+/// Returned by [FormBuilder.addElement].
 class FormBuilderElement {
   FormBuilderElement(this.name, this.label, this.element, this.validator);
 
@@ -46,13 +43,13 @@ class FormBuilderElement {
   /// The element to render.
   final InputElementBase element;
 
-  /// A function which will be passed [element.value] when [FormBuilder.validate]() is called.
+  /// A function which will be passed values the user has entered when [FormBuilder.validate] is called.
   ///
   /// If it returns true, then validation is assumed to have passed.
   ValidatorType validator;
 }
 
-/// A class for building html [FormElement]s.
+/// A class for building html forms.
 class FormBuilder {
   /// Create with a title and a callback.
   FormBuilder(
@@ -64,12 +61,12 @@ class FormBuilder {
 
   /// The title of this form.
   ///
-  /// The title will be shown in a [HeadingElement.h1] element.
+  /// The title will be shown in a h1 element.
   final String title;
 
   /// The sub title of this form.
   ///
-  /// If present, the sub title will be shown in a [HeadingElement.h2] element.
+  /// If present, the sub title will be shown in a h2 element.
   final String subTitle;
 
   /// The callback to be called when the form is submitted.
@@ -99,7 +96,7 @@ class FormBuilder {
   /// The form element of this builder.
   FormElement form;
 
-  /// The subscription for listening to onclick events emitted by [cancelButton].
+  /// The subscription for listening to onclick events emitted by the cancel button.
   StreamSubscription<Event> cancelListener;
 
   /// The subscription for listening to submit events emitted by [form].
@@ -203,7 +200,7 @@ class FormBuilder {
     });
   }
 
-  /// Remove the [form] element from the DOM, unhide and give focus to [keyboardArea].
+  /// Remove the [form] element from the DOM.
   void destroy() {
     cancelListener.cancel();
     submitListener.cancel();

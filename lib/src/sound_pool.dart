@@ -229,7 +229,7 @@ class Sound {
   OnEndedType onEnded;
 
   /// Play an audio buffer.///
-  /// Used by [play], by way of [SoundPool.getBuffer].
+  /// Used by [play], by way of [SoundPool.loadBuffer].
   void playBuffer(AudioBuffer buf) {
     buffer = buf;
     if (source != null) {
@@ -251,9 +251,9 @@ class Sound {
 
   /// Play [source].
   ///
-  /// Uses [SoundPool.getBuffer] to initialise [buffer] if needed.
+  /// Uses [SoundPool.loadBuffer] to initialise [buffer] if needed.
   ///
-  /// Uses [loadBuffer] to actually play the buffer.
+  /// Uses [SoundPool.loadBuffer] to actually play the buffer.
   void play() {
     if (buffer == null) {
       pool.loadBuffer(url, (AudioBuffer buffer) => playBuffer(buffer));
