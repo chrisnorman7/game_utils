@@ -1,22 +1,5 @@
-A library for Dart developers.
+A library containing various game-related utilities I use often.
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+## Example
 
-## Usage
-
-A simple usage example:
-
-```dart
-import 'package:game_utils/game_utils.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+See the examples directory in the [Github repository](https://github.com/chrisnorman7/game_utils).
