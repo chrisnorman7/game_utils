@@ -383,7 +383,10 @@ class Page {
   }
 
   /// Create a page for selecting an ambience.
-  static Page ambiencesPage(Book book, List<String>ambiences, void Function(String) onOk, String title, String Function(String) getUrl) {
+  static Page ambiencesPage(
+    Book book, List<String>ambiences, String currentAmbience,
+    void Function(String) onOk, String Function(String) getUrl, {String title}
+  ) {
     final List<Line> lines = <Line>[
       Line(book, () {
         onOk(null);
@@ -393,11 +396,11 @@ class Page {
       lines.add(
         Line(book, () {
           onOk(ambience);
-        }, titleString: ambience,
+        }, titleString: '${ambience == currentAmbience} ? "* " : ""}$ambience',
         soundUrl: () => getUrl(ambience))
       );
     }
-    return Page(titleString: title, lines: lines, playDefaultSounds: false);
+    return Page(titleString: title ?? 'Ambiences (${ambiences.length})', lines: lines, playDefaultSounds: false);
   }
 
   /// The function to call when [Book.cancel] is called.

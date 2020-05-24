@@ -4,4 +4,8 @@
 
 ## 1.0.1
 
-Add a note about examples.
+- Add a note about examples.
+
+## 1.0.2
+
+- Changed the arguments accepted by Page.ambiencesPage
