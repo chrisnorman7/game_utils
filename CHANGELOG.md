@@ -20,3 +20,11 @@
 - Added a BookOptions class
 - Altered the signatures of a few functions
 - Renamed AmbiencesPage to SoundsPage
+
+## 3.0.0
+
+- Updated Line.checkboxLine to take its title as a function.
+
+## 3.1.0
+
+-- Added an onCancel argument to hotkeyMenu.

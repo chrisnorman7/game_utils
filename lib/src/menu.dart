@@ -295,17 +295,16 @@ class Line {
   ///
   /// When activated, this line will call [setValue], with the negated result of [getValue].
   static Line checkboxLine(
-    Book book, String title, bool Function() getValue, void Function(bool) setValue, {
+    Book book, TitleFunctionType titleFunc, bool Function() getValue, void Function(bool) setValue, {
       String enableUrl = 'sounds/menus/enable.wav',
       String disableUrl = 'sounds/menus/disable.wav',
     }
   ) => Line(book, () {
-    final bool oldValue = getValue();
-    final bool newValue = !oldValue;
-    final String soundUrl = newValue ? enableUrl : disableUrl;
+    final bool value = !getValue();
+    final String soundUrl = value ? enableUrl : disableUrl;
     book.options.soundPool.playSound(soundUrl, output: book.options.soundPool.output);
-    setValue(newValue);
-  }, titleString: title);
+    setValue(value);
+  }, titleFunc: titleFunc);
 
   /// The book which this line is bound to, via a [Page] instance.
   Book book;
@@ -376,7 +375,7 @@ class Page {
   /// Creates a page which lists all [Hotkey] instances, bound to a [Keyboard] instance.
   ///
   /// The [beforeRun] function is called before running any hotkeys.
-  static Page hotkeysPage(List<Hotkey> hotkeys, Book book, {String title, void Function() beforeRun}) {
+  static Page hotkeysPage(List<Hotkey> hotkeys, Book book, {String title, void Function() beforeRun, void Function() onCancel}) {
     final List<Line> lines = <Line>[];
     title ??= 'Hotkeys (${hotkeys.length})';
     for (final Hotkey hk in hotkeys) {
@@ -393,7 +392,7 @@ class Page {
         )
       );
     }
-    return Page(titleString: title, lines: lines);
+    return Page(titleString: title, lines: lines, onCancel: onCancel);
   }
 
   /// Create a page for selecting an ambience.
