@@ -5,7 +5,7 @@ import 'dart:html';
 import 'dart:typed_data';
 import 'dart:web_audio';
 
-typedef OnEndedType = void Function(Sound, Event);
+typedef OnEndedType = void Function(Event);
 
 /// The output types, for use with [SoundPool.setVolume].
 enum OutputTypes {
@@ -201,7 +201,7 @@ class Sound {
       ..loop = loop
       ..connectNode(output);
     if (onEnded != null) {
-      source.onEnded.listen((Event e) => onEnded(this, e));
+      source.onEnded.listen(onEnded);
     }
   }
 

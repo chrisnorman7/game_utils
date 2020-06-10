@@ -36,3 +36,7 @@ Changed the signature of sound onEnded callbacks.
 ## 4.1.1
 
 Fixed a bug with stopping sounds.
+
+## 5.0.0
+
+Restored signature of sound onEnded callbacks.
