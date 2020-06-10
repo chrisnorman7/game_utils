@@ -28,3 +28,11 @@
 ## 3.1.0
 
 -- Added an onCancel argument to hotkeyMenu.
+
+## 4.1.0
+
+Changed the signature of sound onEnded callbacks.
+
+## 4.1.1
+
+Fixed a bug with stopping sounds.

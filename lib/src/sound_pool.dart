@@ -243,7 +243,15 @@ class Sound {
   /// Stop [source].
   void stop() {
     if (source != null) {
-      source.disconnect();
+      try {
+        source.stop();
+      }
+      on DomException {
+        // It hasn't been started yet.
+      }
+      finally {
+        source.disconnect();
+      }
     }
     source = null;
     buffer = null;
