@@ -40,3 +40,7 @@ Fixed a bug with stopping sounds.
 ## 5.0.0
 
 Restored signature of sound onEnded callbacks.
+
+## 5.0.1
+
+Only run onCancel  when a form has actually been cancelled.

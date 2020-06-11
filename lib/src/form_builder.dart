@@ -160,7 +160,7 @@ class FormBuilder {
         for (final FormBuilderElement e in elements) {
           data[e.name] = e.element.value;
         }
-        destroy();
+        destroy(runOnCancel: false);
         done(data);
       }
     });
@@ -201,12 +201,12 @@ class FormBuilder {
   }
 
   /// Remove the [form] element from the DOM.
-  void destroy() {
+  void destroy({bool runOnCancel = true}) {
     cancelListener.cancel();
     submitListener.cancel();
     keyListener.cancel();
     form.remove();
-    if (onCancel != null) {
+    if (onCancel != null && runOnCancel) {
       onCancel();
     }
   }
