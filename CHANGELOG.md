@@ -1,3 +1,5 @@
+# Changelog
+
 ## 1.0.0
 
 - Initial version, created by Stagehand
@@ -44,3 +46,7 @@ Restored signature of sound onEnded callbacks.
 ## 5.0.1
 
 Only run onCancel  when a form has actually been cancelled.
+
+## 5.0.2
+
+Pass a confirm page cancelFunc callback as the onCancel argument to the underlying Page constructor.

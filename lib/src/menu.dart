@@ -368,7 +368,8 @@ class Page {
     ];
     return Page(
       titleString: title,
-      lines: lines
+      lines: lines,
+      onCancel: cancelFunc
     );
   }
 
